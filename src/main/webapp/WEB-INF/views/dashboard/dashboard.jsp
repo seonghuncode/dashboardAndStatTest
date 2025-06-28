@@ -357,6 +357,21 @@
 		  const workbook = XLSX.utils.table_to_book(table, { sheet: "통계 요약" });
 		  XLSX.writeFile(workbook, 'statistics.xlsx');
 		}
+		
+		
+		//그래프를 이미지로 변환 후 저장
+		function downloadChartImage(chartId, fileName) {
+		  const chart = echarts.getInstanceByDom(document.getElementById(chartId));
+		  const dataURL = chart.getDataURL({
+		    pixelRatio: 2,
+		    backgroundColor: '#fff'
+		  });
+		
+		  const a = document.createElement('a');
+		  a.href = dataURL;
+		  a.download = fileName + '.png';
+		  a.click();
+		}
 	</script>
 
 
@@ -434,6 +449,12 @@
 	<div style="text-align: center; margin-bottom: 20px;">
 	  <button onclick="downloadDashboardAsPDF()">📄 대시보드 PDF 저장</button>
 	  <button onclick="downloadStatsAsExcel()">📊 통계표 Excel 저장</button>
+	</div>
+	
+	<div>
+		<button onclick="downloadChartImage('myChart', 'pie_chart')">Pie 차트 이미지 저장</button>
+		<button onclick="downloadChartImage('myLineChart', 'line_chart')">Line 차트 이미지 저장</button>
+		<button onclick="downloadChartImage('myBarChart', 'bar_chart')">Bar 차트 이미지 저장</button>
 	</div>
 
 
