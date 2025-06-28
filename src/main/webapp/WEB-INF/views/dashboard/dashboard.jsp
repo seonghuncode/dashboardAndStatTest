@@ -5,9 +5,17 @@
 <head>
 <meta charset="UTF-8">
 <!-- ECharts 라이브러리 CDN -->
-<script
-	src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- html2canvas + jsPDF for PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- SheetJS for Excel -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+
 
 <!-- 차트 영역 스타일 -->
 <style>
@@ -78,6 +86,7 @@
 
 <body>
 	<script type="text/javascript">
+	
 		$(document).ready(function() {
 
 			pieChart();
@@ -324,6 +333,30 @@
 			  });
 
 		}
+		
+		
+		//데이터 저장------------------------------------------------------
+		// 📄 대시보드를 PDF로 저장
+		function downloadDashboardAsPDF() {
+		  html2canvas(document.body).then(function(canvas) {
+		    const imgData = canvas.toDataURL('image/png');
+		    const { jsPDF } = window.jspdf;
+		    const pdf = new jsPDF('p', 'mm', 'a4');
+		
+		    const pdfWidth = pdf.internal.pageSize.getWidth();
+		    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+		
+		    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+		    pdf.save('dashboard.pdf');
+		  });
+		}
+		
+		// 📊 통계 테이블을 Excel로 저장
+		function downloadStatsAsExcel() {
+		  const table = document.querySelector('.stat-table');
+		  const workbook = XLSX.utils.table_to_book(table, { sheet: "통계 요약" });
+		  XLSX.writeFile(workbook, 'statistics.xlsx');
+		}
 	</script>
 
 
@@ -396,6 +429,11 @@
 			</div>
 		</div>
 		
+	</div>
+	
+	<div style="text-align: center; margin-bottom: 20px;">
+	  <button onclick="downloadDashboardAsPDF()">📄 대시보드 PDF 저장</button>
+	  <button onclick="downloadStatsAsExcel()">📊 통계표 Excel 저장</button>
 	</div>
 
 
