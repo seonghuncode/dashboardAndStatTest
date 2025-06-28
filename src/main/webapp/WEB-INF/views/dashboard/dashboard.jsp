@@ -372,6 +372,26 @@
 		  a.download = fileName + '.png';
 		  a.click();
 		}
+		
+		//파이차트의 데이터를 엑셀 파일에 저장 
+		//(차트 이미지를 엑셀에 넣는 방법으로 sheetJS Pro or ExcepJS등 유료 라이브러리를 사용하거나 수동으로 주입은 가능하나 이미지를 엑셀에 넣는 것은 공수가 큼)
+		function savePieDataToExcel() {
+		  // ECharts Pie 데이터 (수동 또는 ECharts 옵션에서 가져오기)
+		  const data = [
+		    ['항목', '값'],
+		    ['Search Engine', 1048],
+		    ['Direct', 735],
+		    ['Email', 580],
+		    ['Union Ads', 484],
+		    ['Video Ads', 300]
+		  ];
+		
+		  const worksheet = XLSX.utils.aoa_to_sheet(data);
+		  const workbook = XLSX.utils.book_new();
+		  XLSX.utils.book_append_sheet(workbook, worksheet, "PieChartData");
+		  XLSX.writeFile(workbook, "pie_chart_data.xlsx");
+		}
+		
 	</script>
 
 
@@ -455,6 +475,10 @@
 		<button onclick="downloadChartImage('myChart', 'pie_chart')">Pie 차트 이미지 저장</button>
 		<button onclick="downloadChartImage('myLineChart', 'line_chart')">Line 차트 이미지 저장</button>
 		<button onclick="downloadChartImage('myBarChart', 'bar_chart')">Bar 차트 이미지 저장</button>
+	</div>
+	
+	<div>
+		<button onclick="savePieDataToExcel()">파이 차트 데이터 저장</button>
 	</div>
 
 
