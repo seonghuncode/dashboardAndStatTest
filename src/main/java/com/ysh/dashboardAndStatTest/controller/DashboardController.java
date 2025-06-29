@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
+import com.ysh.dashboardAndStatTest.service.DashboardCaptureService;
 import com.ysh.dashboardAndStatTest.service.PdfService;
 
 @Controller
@@ -30,6 +31,10 @@ public class DashboardController {
 	
 	@Autowired
     private PdfService pdfService;
+	
+	
+	 @Autowired
+	 private DashboardCaptureService captureService;
 
 
 	@RequestMapping(value = "/Dashboard", method = RequestMethod.GET)
@@ -119,6 +124,18 @@ public class DashboardController {
 //
 //	     return test;
 //    }
+	 
+	 
+
+	    @GetMapping("/save-pdf")
+	    public ResponseEntity<String> saveDashboardPdf() {
+	        String jspUrl = "http://localhost:8081/Dashboard"; // 실제 JSP 경로
+	        //String savePath = "/your/server/path/dashboard.pdf"; // 저장 경로
+	        String savePath = "C:\\Users\\USER\\OneDrive\\바탕 화면\\개발\\dashboard.pdf"; // 저장 경로
+
+	        captureService.captureJspAsPdf(jspUrl, savePath);
+	        return ResponseEntity.ok("PDF 저장 완료: " + savePath);
+	    }
 	 
 	
 }
