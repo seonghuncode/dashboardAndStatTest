@@ -1,5 +1,6 @@
 package com.ysh.dashboardAndStatTest.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -8,17 +9,28 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.client.RestTemplate;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
+import com.ysh.dashboardAndStatTest.service.PdfService;
 
 @Controller
 public class DashboardController {
+	
+	@Autowired
+    private PdfService pdfService;
+
 
 	@RequestMapping(value = "/Dashboard", method = RequestMethod.GET)
 	public String dashboard() {
@@ -70,5 +82,43 @@ public class DashboardController {
 	    document.add(new Paragraph("페이지뷰: 3000"));
 	    document.close();
 	}
+	
+	
+	//JSP출력용
+	 @RequestMapping("/report-view")
+	 public String showReport(Model model) {
+//	     List<ReportItem> items = Arrays.asList(
+//	             new ReportItem("포트 점검", "양호"),
+//	             new ReportItem("보안 패치", "미흡")
+//	     );
+//	     model.addAttribute("date", LocalDate.now().toString());
+//	     model.addAttribute("items", items);
+	     return "dashboard/dashboard"; // /WEB-INF/views/report.jsp
+	 }
+	 
+	 @GetMapping("/download/report")
+	 public ResponseEntity<byte[]> downloadPdf() {
+	     byte[] pdf = pdfService.generatePdfFromJsp();
+		 //byte[] pdf = null;
+
+
+	     HttpHeaders headers = new HttpHeaders();
+	     headers.setContentType(MediaType.APPLICATION_PDF);
+	     headers.setContentDispositionFormData("attachment", "report.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdf);
+    }
+
+	 
+//	 @GetMapping("/download/report")
+//	 public String downloadPdf() {
+//	     String test = pdfService.test();
+//		 //byte[] pdf = null;
+//
+//	     return test;
+//    }
+	 
 	
 }
